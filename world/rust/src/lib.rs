@@ -25,7 +25,7 @@ static INIT_LOGGING: std::sync::Once = std::sync::Once::new();
 // this enum will represent a creep's lock on a specific target object, storing a js reference
 // to the object id so that we can grab a fresh reference to the object each successive tick,
 // since screeps game objects become 'stale' and shouldn't be used beyond the tick they were fetched
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 enum CreepTarget {
     Upgrade(ObjectId<StructureController>),
     Harvest(ObjectId<Source>),
@@ -37,7 +37,7 @@ enum CreepTarget {
 pub fn game_loop() {
     INIT_LOGGING.call_once(|| {
         // show all output of Info level, adjust as needed
-        logging::setup_logging(logging::Info);
+        logging::setup_logging(logging::Debug);
     });
 
     debug!("loop starting! CPU: {}", game::cpu::get_used());

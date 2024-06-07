@@ -17,6 +17,10 @@ pub fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>
     debug!("running creep {}", name);
 
     let target = creep_targets.entry(name);
+    
+    // log the target type
+    debug!("target: {:?}", target);
+
     match target {
         Entry::Occupied(entry) => {
             let creep_target = entry.get();
