@@ -6,7 +6,7 @@ use log::*;
 use screeps::{
     game,
     local::ObjectId,
-    objects::{Source, StructureController},
+    objects::{Source, StructureController, StructureExtension},
 };
 use wasm_bindgen::prelude::*;
 
@@ -30,6 +30,7 @@ static INIT_LOGGING: std::sync::Once = std::sync::Once::new();
 enum CreepTarget {
     Upgrade(ObjectId<StructureController>),
     Harvest(ObjectId<Source>),
+    Store(ObjectId<StructureExtension>),
 }
 
 // add wasm_bindgen to any function you would like to expose for call from js
@@ -47,7 +48,7 @@ pub fn game_loop() {
     // in the wasm heap
     CREEP_TARGETS.with(|creep_targets_refcell| {
         let mut creep_targets = creep_targets_refcell.borrow_mut();
-        debug!("running creeps");
+        // debug!("running creeps");
         for creep in game::creeps().values() {
             management::run(&creep, &mut creep_targets);
         }

@@ -9,10 +9,10 @@ use screeps::{
 use wasm_bindgen::JsCast;
 
 pub fn run() {
-    debug!("running spawns");
+    // debug!("running spawns");
     let mut additional = 0;
     for spawn in game::spawns().values() {
-        debug!("running spawn {}", spawn.name());
+        // debug!("running spawn {}", spawn.name());
 
         let body = [Part::Move, Part::Move, Part::Carry, Part::Work];
         if spawn.room().unwrap().energy_available() >= body.iter().map(|p| p.cost()).sum() {
@@ -29,7 +29,7 @@ pub fn run() {
     // memory cleanup; memory gets created for all creeps upon spawning, and any time move_to
     // is used; this should be removed if you're using RawMemory/serde for persistence
     if game::time() % 1000 == 0 {
-        info!("running memory cleanup");
+        // info!("running memory cleanup");
         let mut alive_creeps = HashSet::new();
         // add all living creep names to a hashset
         for creep_name in game::creeps().keys() {
@@ -47,7 +47,7 @@ pub fn run() {
 
                 // check the HashSet for the creep name, deleting if not alive
                 if !alive_creeps.contains(&creep_name) {
-                    info!("deleting memory for dead creep {}", creep_name);
+                    // info!("deleting memory for dead creep {}", creep_name);
                     let _ = Reflect::delete_property(&memory_creeps, &creep_name_js);
                 }
             }

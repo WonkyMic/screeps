@@ -35,6 +35,8 @@ nano screeps.toml
 # Compile plus deploy to the configured 'upload' mode; any section name you
 # set up in your screeps.toml for different environments and servers can be used
 cargo screeps deploy -m upload
+
+cargo screeps build
 ```
 
 [screeps]: https://screeps.com/

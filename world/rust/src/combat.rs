@@ -5,7 +5,7 @@ use screeps::{
 };
 
 pub fn run() {
-    debug!("running combat");
+    // debug!("running combat");
 
     let room = game::rooms().values().next().expect("room not found");
 
