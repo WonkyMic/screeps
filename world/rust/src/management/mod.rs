@@ -2,8 +2,10 @@ use crate::CreepTarget;
 use std::collections::{hash_map::Entry, HashMap};
 use log::{debug, warn};
 use screeps::{
-    constants::{ErrorCode, ResourceType}, enums::StructureObject, find, objects::Creep, HasId, HasPosition, SharedCreepProperties, StructureProperties
+    constants::{ErrorCode, ResourceType}, enums::StructureObject, find, objects::Creep, HasId, HasPosition, SharedCreepProperties,
 };
+
+mod structures;
 
 /*
 
@@ -18,17 +20,42 @@ use screeps::{
 
 */
 
+fn diagnostics() {
+    // owned structures
+    let owned_structures = structures::get_owned();
+
+    owned_structures.iter().for_each(|structure| {
+        debug!("structure: {:?}", structure);
+    });
+    structures::get_actionable().iter().for_each(|structure| {
+        debug!("actionable: {:?}", structure);
+    });
+
+    // is repairable
+    let repairable = owned_structures.iter().filter(|structure| structures::is_repairable(structure));
+    repairable.for_each(|structure| {
+        debug!("repairable: {:?}", structure);
+    });
+
+    // has free capacity
+    let free_capacity = owned_structures.iter().filter(|structure| structures::has_free_capacity(structure));
+    free_capacity.for_each(|structure| {
+        debug!("free capacity: {:?}", structure);
+    });
+}
+
 pub fn run(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
     if creep.spawning() {
         return;
     }
     let name = creep.name();
-    debug!("running creep {}", name);
+    // debug!("running creep {}", name);
+    // diagnostics();
 
     let target = creep_targets.entry(name);
     
     // log the target type
-    debug!("target: {:?}", target);
+    // debug!("target: {:?}", target);
 
     let creep_energy_capacity = creep.store().get_used_capacity(Some(ResourceType::Energy));
 
@@ -93,11 +120,11 @@ pub fn run(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
             };
         }
         Entry::Vacant(entry) => {
-            debug!("VACANT :: assigning target");
+            // debug!("VACANT :: assigning target");
             // no target, let's find one depending on if we have energy
             let room = creep.room().expect("couldn't resolve creep room");
             if creep_energy_capacity > 0 {
-                debug!("VACANT :: has energy");
+                // debug!("VACANT :: has energy");
 
                 /*
                  when looping through structures, the order is not guaranteed, so search for priority targets first
@@ -138,9 +165,20 @@ pub fn run(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                     warn!("no target found for creep");
                 }
 
-            } else if let Some(source) = room.find(find::SOURCES_ACTIVE, None).first() {
-                debug!("VACANT :: has no energy");
-                entry.insert(CreepTarget::Harvest(source.id()));
+            } else if !room.find(find::SOURCES_ACTIVE, None).is_empty() {
+                // debug!("VACANT :: no energy, has sources");
+                // calculate the distance between the spawn and the sources
+                let spawn = structures::get_spawn(creep).expect("no spawn found");
+                let mut source_distances = room
+                    .find(find::SOURCES_ACTIVE, None)
+                    .iter()
+                    .map(|source| (source.id(), spawn.pos().get_range_to(source.pos())))
+                    .collect::<Vec<_>>();
+                source_distances.sort_by_key(|(_, distance)| *distance);
+
+                let (source_id, _) = source_distances.first().expect("no source found");
+                entry.insert(CreepTarget::Harvest(*source_id));                
+                debug!("VACANT :: assigned to harvest");
             } else {
                 warn!("no target found for creep");
             }
