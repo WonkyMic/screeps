@@ -9,7 +9,7 @@ use screeps::{
     SharedCreepProperties,
 };
 
-pub fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
+pub fn run(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
     if creep.spawning() {
         return;
     }

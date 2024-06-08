@@ -13,6 +13,7 @@ use wasm_bindgen::prelude::*;
 mod lifecycle;
 mod logging;
 mod management;
+mod combat;
 
 // this is one way to persist data between ticks within Rust's memory, as opposed to
 // keeping state in memory on game objects - but will be lost on global resets!
@@ -48,12 +49,14 @@ pub fn game_loop() {
         let mut creep_targets = creep_targets_refcell.borrow_mut();
         debug!("running creeps");
         for creep in game::creeps().values() {
-            management::run_creep(&creep, &mut creep_targets);
+            management::run(&creep, &mut creep_targets);
         }
     });
 
     // lifecycle
     lifecycle::run();
+
+    combat::run();
 
     info!("done! cpu: {}", game::cpu::get_used())
 }
