@@ -6,7 +6,7 @@ use log::*;
 use screeps::{
     game,
     local::ObjectId,
-    objects::{Source, StructureController, StructureExtension},
+    objects::{Source, StructureController, StructureExtension, StructureSpawn, StructureTower},
 };
 use wasm_bindgen::prelude::*;
 
@@ -30,7 +30,9 @@ static INIT_LOGGING: std::sync::Once = std::sync::Once::new();
 enum CreepTarget {
     Upgrade(ObjectId<StructureController>),
     Harvest(ObjectId<Source>),
-    Store(ObjectId<StructureExtension>),
+    StoreExtension(ObjectId<StructureExtension>),
+    StoreSpawn(ObjectId<StructureSpawn>),
+    StoreTower(ObjectId<StructureTower>),
 }
 
 // add wasm_bindgen to any function you would like to expose for call from js
@@ -39,7 +41,7 @@ enum CreepTarget {
 pub fn game_loop() {
     INIT_LOGGING.call_once(|| {
         // show all output of Info level, adjust as needed
-        logging::setup_logging(logging::Debug);
+        logging::setup_logging(logging::Info);
     });
 
     debug!("loop starting! CPU: {}", game::cpu::get_used());

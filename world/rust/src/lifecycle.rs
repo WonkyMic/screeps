@@ -8,29 +8,30 @@ use screeps::{
 };
 use wasm_bindgen::JsCast;
 
-// fn purge() {
-//     debug!("running purge");
-//     // remove creeps with a lifecycle of less than 500 ticks
-//     for creep in game::creeps().values() {
-//         if creep.ticks_to_live().unwrap_or(0) < 1000 {
-//             let _ =creep.suicide();
-//         }
-//     }
+fn purge() {
+    debug!("running purge");
+    // remove creeps with a lifecycle of less than 500 ticks
+    for creep in game::creeps().values() {
+        if creep.ticks_to_live().unwrap_or(0) < 25 {
+            let _ =creep.suicide();
+        }
+    }
     
-// }
+}
 
 pub fn run() {
     // debug!("running spawns");
 
-    // purge();
+    purge();
 
     let mut additional = 0;
     let total_creeps = game::creeps().entries().count();
     for spawn in game::spawns().values() {
         // debug!("running spawn {}", spawn.name());
+        info!("Available Energy {:?}", spawn.room().unwrap().energy_available());
 
         let body = [Part::Move, Part::Move, Part::Carry, Part::Work];
-        if total_creeps < 5 && spawn.room().unwrap().energy_available() >= body.iter().map(|p| p.cost()).sum(){
+        if total_creeps < 8 && spawn.room().unwrap().energy_available() >= body.iter().map(|p| p.cost()).sum(){
             // create a unique name, spawn.
             let name_base = game::time();
             let name = format!("{}-{}", name_base, additional);
