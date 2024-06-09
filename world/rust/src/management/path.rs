@@ -4,7 +4,6 @@ use screeps::{
     Source,
 };
 
-
 pub fn check_if_source_is_occuppied(source: &Source) -> bool {
     // if two creeps are next to the source, then it is occuppied
     let creeps = source.room().unwrap().find(find::MY_CREEPS, None);

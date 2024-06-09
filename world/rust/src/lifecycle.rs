@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 use js_sys::{JsString, Object, Reflect};
-use log::{debug, info, warn};
+use log::{debug, warn};
 use screeps::{
     constants::Part,
     game,
@@ -10,7 +10,6 @@ use wasm_bindgen::JsCast;
 
 fn purge() {
     debug!("running purge");
-    // remove creeps with a lifecycle of less than 500 ticks
     for creep in game::creeps().values() {
         if creep.ticks_to_live().unwrap_or(0) < 25 {
             let _ =creep.suicide();
@@ -20,15 +19,12 @@ fn purge() {
 }
 
 pub fn run() {
-    // debug!("running spawns");
-
     purge();
 
     let mut additional = 0;
     let total_creeps = game::creeps().entries().count();
     for spawn in game::spawns().values() {
-        // debug!("running spawn {}", spawn.name());
-        info!("Available Energy {:?}", spawn.room().unwrap().energy_available());
+        debug!("Available Energy {:?}", spawn.room().unwrap().energy_available());
 
         let body = [Part::Move, Part::Move, Part::Carry, Part::Work];
         if total_creeps < 8 && spawn.room().unwrap().energy_available() >= body.iter().map(|p| p.cost()).sum(){
@@ -45,8 +41,8 @@ pub fn run() {
     // memory cleanup; memory gets created for all creeps upon spawning, and any time move_to
     // is used; this should be removed if you're using RawMemory/serde for persistence
     if game::time() % 1000 == 0 {
-        // info!("running memory cleanup");
         let mut alive_creeps = HashSet::new();
+        
         // add all living creep names to a hashset
         for creep_name in game::creeps().keys() {
             alive_creeps.insert(creep_name);

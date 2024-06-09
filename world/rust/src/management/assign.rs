@@ -9,11 +9,8 @@ use crate::management::path;
 use crate::management::structures;
 
 pub fn run(creep: &Creep, entry: VacantEntry<String, CreepTarget>) {
-    // debug!("VACANT :: assigning target");
-    // no target, let's find one depending on if we have energy
     let room = creep.room().expect("couldn't resolve creep room");
     if creep.store().get_used_capacity(Some(ResourceType::Energy)) > 0 {
-        // debug!("VACANT :: has energy");
 
         /*
             when looping through structures, the order is not guaranteed, so search for priority targets first
@@ -83,9 +80,8 @@ pub fn run(creep: &Creep, entry: VacantEntry<String, CreepTarget>) {
         } else {
             warn!("no target found for creep");
         }
-
+        
     } else if !room.find(find::SOURCES_ACTIVE, None).is_empty() {
-        // debug!("VACANT :: no energy, has sources");
         // calculate the distance between the spawn and the sources
         let spawn = structures::get_spawn(creep).expect("no spawn found");
         let mut source_distances = room
@@ -95,7 +91,6 @@ pub fn run(creep: &Creep, entry: VacantEntry<String, CreepTarget>) {
             .collect::<Vec<_>>();
         source_distances.sort_by_key(|(_, distance)| *distance);
 
-        // debug!("VACANT :: source is occupied");
         // find the closest source that is not occupied
         for (source_id, _) in source_distances.iter() {
             if !path::check_if_source_is_occuppied(&source_id.resolve().expect("source not found")){

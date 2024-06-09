@@ -6,7 +6,7 @@ use log::*;
 use screeps::{
     game,
     local::ObjectId,
-    objects::{Source, Structure, StructureController, StructureExtension, StructureSpawn, StructureTower},
+    objects::{Source, StructureController, StructureExtension, StructureSpawn, StructureTower},
 };
 use wasm_bindgen::prelude::*;
 
@@ -28,7 +28,6 @@ static INIT_LOGGING: std::sync::Once = std::sync::Once::new();
 // since screeps game objects become 'stale' and shouldn't be used beyond the tick they were fetched
 #[derive(Clone, Debug)]
 enum CreepTarget {
-    Build(ObjectId<Structure>),
     Upgrade(ObjectId<StructureController>),
     Harvest(ObjectId<Source>),
     StoreExtension(ObjectId<StructureExtension>),
@@ -47,20 +46,15 @@ pub fn game_loop() {
 
     debug!("loop starting! CPU: {}", game::cpu::get_used());
 
-    // mutably borrow the creep_targets refcell, which is holding our creep target locks
-    // in the wasm heap
+    // Creep logic
+    lifecycle::run();
+    combat::run();
+
     CREEP_TARGETS.with(|creep_targets_refcell| {
         let mut creep_targets = creep_targets_refcell.borrow_mut();
-        // debug!("running creeps");
         for creep in game::creeps().values() {
             management::run(&creep, &mut creep_targets);
         }
     });
-
-    // lifecycle
-    lifecycle::run();
-
-    combat::run();
-
-    info!("done! cpu: {}", game::cpu::get_used())
+    debug!("done! cpu: {}", game::cpu::get_used())
 }
