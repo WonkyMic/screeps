@@ -6,7 +6,7 @@ use log::*;
 use screeps::{
     game,
     local::ObjectId,
-    objects::{Source, StructureController, StructureExtension, StructureSpawn, StructureTower},
+    objects::{Source, Structure, StructureController, StructureExtension, StructureSpawn, StructureTower},
 };
 use wasm_bindgen::prelude::*;
 
@@ -28,6 +28,7 @@ static INIT_LOGGING: std::sync::Once = std::sync::Once::new();
 // since screeps game objects become 'stale' and shouldn't be used beyond the tick they were fetched
 #[derive(Clone, Debug)]
 enum CreepTarget {
+    Build(ObjectId<Structure>),
     Upgrade(ObjectId<StructureController>),
     Harvest(ObjectId<Source>),
     StoreExtension(ObjectId<StructureExtension>),
