@@ -27,7 +27,7 @@ pub fn run() {
         debug!("Available Energy {:?}", spawn.room().unwrap().energy_available());
 
         let body = [Part::Move, Part::Move, Part::Carry, Part::Work];
-        if total_creeps < 8 && spawn.room().unwrap().energy_available() >= body.iter().map(|p| p.cost()).sum(){
+        if total_creeps < 10 && spawn.room().unwrap().energy_available() >= body.iter().map(|p| p.cost()).sum(){
             // create a unique name, spawn.
             let name_base = game::time();
             let name = format!("{}-{}", name_base, additional);

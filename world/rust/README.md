@@ -2,11 +2,8 @@
 Visit the [Getting Started Guide](./docs/start.md).
 
 ## TODO
-- Evenly distribute creeps to different sources
-- Evenly distribute creeps to different structures
-  - Prioritize structures that are closer to the source
-  - Prioritize structures that are closer to the controller
-  - Ensure that the controller is always being upgraded
+- Improve pathing
+  - Harvesting between two full nodes creates churn, pathing back and forth
 - Implement a way to assign creeps to different roles
 - Implement a way to assign creeps to different rooms
 
